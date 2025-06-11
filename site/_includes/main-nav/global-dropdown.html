@@ -1,0 +1,65 @@
+{%- comment -%}
+  File: global-dropdown.html (dropdown-menu.html)
+  Description: This file contains the Jekyll template code for generating a dynamic dropdown menu
+               for a navigation bar. The dropdown is titled "Blog" and includes links to "All Stories", 
+               "Categories", and "Tags". The menu utilizes AMP (Accelerated Mobile Pages) for state 
+               management to toggle the dropdown's expanded state and focus, enhancing user interaction 
+               and accessibility. The dropdown is designed to be responsive and accessible, ensuring 
+               compatibility across various devices and screen sizes.
+
+  Usage: Include this file in your Jekyll project where a navigation bar with a dropdown menu is required.
+         Ensure AMP is properly configured in your project to enable the interactive features.
+
+  Dependencies: 
+    - AMP framework for state management
+    - Font Awesome for icons
+
+    Notes: 
+    - The dropdown menu is styled with custom CSS classes such as 'nav-item', 'dropdown-toggle', 
+      and 'scrollbar-thin'. Adjust these styles in your CSS files as needed.
+    - The menu items link to specific sections of the website: '/blog/', '/category/', and '/tag/'.
+      Update these links according to your site's structure.
+
+  Author: Chris K.Y. FUNG (https://chriskyfung.github.io/)
+  Date: 2021-10-10
+{%- endcomment -%}
+
+
+{%- assign dropdown_text = "Blog" -%}
+{%- assign dropdown_id = dropdown_text | slugify -%}
+{%- assign dropdown_id_tokens = dropdown_id | split: "-" -%}
+{%- assign dropdown_var = dropdown_id_tokens[0] | first -%}
+{%- for token in dropdown_id_tokens offset:1 -%}
+{%- assign dropdown_var = token | capitalize | prepend: dropdown_var -%}
+{% endfor %}
+{%- assign dropdown_submenu_id = dropdown_id | append: "-dropdown" -%}
+{%- assign dropdown_expanded_var = dropdown_var | append: "DropdownExpanded" -%}
+{%- assign dropdown_expanded_focus = dropdown_id | append: "-expanded-focus" -%}
+
+<li id="{{ dropdown_id }}" class="nav-item dropdown" role="none">
+  <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" 
+    aria-controls="{{ dropdown_submenu_id }}" aria-haspopup="true" aria-expanded="false"
+    [aria-expanded]="{{ dropdown_expanded_var }} ? 'true' : 'false'" tabindex="0"
+    on="tap:AMP.setState({ {{ dropdown_expanded_var }}: !{{ dropdown_expanded_var }} }),{{ dropdown_expanded_focus }}.focus">
+    {{ dropdown_text }}
+  </a>
+  <div id="{{ dropdown_submenu_id }}" class="dropdown-menu scrollbar-thin" aria-labelledby="{{ dropdown_id }}">
+    <ul style="list-style: none; padding-left: 0;">
+      <li>
+        <a id="{{ dropdown_expanded_focus }}" class="dropdown-item" href="/blog/">
+          <i class="far fa-newspaper mr-2"></i>All Stories
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="/category/">
+          <i class="far fa-list-alt mr-2"></i>Categories
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="/tag/">
+          <i class="fas fa-tag mr-2"></i>Tags
+        </a>
+      </li>
+    </ul>
+  </div>
+</li>

@@ -1,0 +1,22 @@
+---
+title: Archive
+layout: page
+sidebar: left
+---
+
+<!-- Begin List Posts -->
+<section class="row recent-posts">  
+  <div class="section-title">
+    <h1><span>{{ page.type }} '{{ page.title }}'</span></h1>
+  </div>
+  <div class="masonrygrid row listrecent">
+    <h2 class="sr-only">Post Grid</h2>
+
+    {%- for post in page.posts -%}
+
+    {%- include blocks/post-box.html -%}
+
+    {%- endfor -%}
+
+  </div>  
+</section>

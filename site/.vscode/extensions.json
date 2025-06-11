@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "ginfuru.vscode-jekyll-snippets",
+    "eliostruyf.vscode-front-matter",
+    "catherinekorres.amp-snippets",
+    "mervin.markdown-formatter",
+    "rohgarg.jekyll-post",
+    "piotrpalarz.vscode-gitignore-generator",
+    "sissel.shopify-liquid",
+    "jack89ita.copy-filename",
+    "kisstkondoros.vscode-gutter-preview",
+    "tchayen.markdown-links",
+    "mathiassoeholm.markdown-link-updater",
+    "redhat.vscode-yaml",
+    "josee9988.minifyall",
+    "janne252.fontawesome-autocomplete",
+    "takumii.markdowntable",
+    "glenn2223.live-sass"
+  ]
+}

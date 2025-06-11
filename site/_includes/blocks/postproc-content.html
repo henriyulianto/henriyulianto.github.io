@@ -1,0 +1,75 @@
+{%- comment -%}
+  File: postproc-content.html
+  Description: This Jekyll template processes HTML content to modify anchor tags with external URLs. 
+               It adds specific attributes based on site configurations:
+               - If `site.ga4` is enabled, it appends `data-vars-event-label` for Google Analytics 4 tracking.
+               - If `site.target_blank` is enabled, it adds `rel="noopener noreferrer"` and
+                 `target="_blank"` for security and usability.
+               - Additionally, it can append anchor links to headers if `site.anchor_link` is enabled.
+  Author: Chris K.Y. FUNG (https://chriskyfung.github.io/)
+  Date: 2024-11-19
+{%- endcomment -%}
+
+
+{%- unless site.ga4 or site.target_blank == true -%}
+  {%- assign resulted_html = page.content -%}
+
+{%- else -%}
+  {%- assign html_segments = page.content | split: '<a ' -%}
+  {%- assign resulted_html = html_segments[0] -%}
+  
+  {%- for html_segment in html_segments offset:1 -%}
+    {%- assign html_subsegments = html_segment | split: '</a>' -%}
+    {%- assign tag_fragements = html_subsegments[0] | split: '>' -%}
+    {%- assign opening_tag = tag_fragements[0] -%}
+    
+    {%- unless opening_tag contains 'href="http://' or opening_tag contains 'href="https://' -%}
+      {%- assign resulted_html = resulted_html | append: '<a ' | append: html_segment -%}
+      
+    {%- else -%}
+      {%- if opening_tag contains ' target="' or opening_tag contains ' class="' or opening_tag contains ' rel="' -%}
+        {%- assign resulted_html = resulted_html | append: '<a ' | append: html_segment -%}
+      {%- else -%}
+        {%- assign link_url = opening_tag | prepend: ' ' | split: 'href="' | slice: 1 | join: '' | split: '"' | first -%}
+        
+        {%- assign a_innerHtml = tag_fragements | slice: 1, tag_fragements.size | join: '>' -%}
+        {%- assign lastchar = html_subsegments[0] | slice: -1, 1 -%}
+        {%- if lastchar == '>' -%}
+          {%- assign a_innerHtml = a_innerHtml | append: '>' -%}
+        {%- endif -%}
+
+        {%- if site.ga4 -%}
+          {%- assign ga4_data_vars = 'data-vars-event-label="' | append: link_url | append: '" ' -%}
+        {%- endif -%}
+
+        {%- if site.target_blank == true -%}
+          {%- assign rel_target = ' rel="noopener noreferrer" target="_blank"' -%}
+        {%- endif -%}
+        {%- assign modified_anchor = '<a ' | append: ga4_data_vars | append: opening_tag | append: rel_target | append: ' >' | append: a_innerHtml | append: '</a>' -%}
+        {%- assign resulted_html = resulted_html | append: modified_anchor | append: html_subsegments[1] -%}
+      {%- endif -%}
+
+    {%- endunless -%}    
+  {%- endfor -%}
+{%- endunless -%}
+
+{%- if site.anchor_link == true -%}
+  {%- assign tag_names = 'h2, h3, h4' | replace: ' ' | split: ',' -%}
+  {%- for tag_name in tag_names -%}
+    {%- assign open_tag_with_id = '<' | append: tag_name | append: ' id=' -%}
+    {%- assign close_tag = '</' | append: tag_name | append: '>' -%}
+    
+    {%- assign html_segments = resulted_html | split: open_tag_with_id -%}
+    {%- assign resulted_html = html_segments[0] -%}
+    {%- for html_segment in html_segments offset:1 -%}
+      {%- assign html_subsegments = html_segment | split: close_tag -%}
+      {%- assign tag_fragements = html_subsegments[0] | split: '>' -%}
+      {%- assign tag_id = tag_fragements[0] | replace: '"', '' -%}
+      {%- assign anchor_link = '<a class="anchor-link" href="#' | append: tag_id | append: '"><i class="fas fa-link"></i></a>' -%}
+      {%- assign modified_element = open_tag_with_id | append: html_subsegments[0] | append: anchor_link | append: close_tag -%}
+      {% assign resulted_html = resulted_html | append: modified_element |  append: html_subsegments[1] -%}
+    {%- endfor -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{{ resulted_html }}

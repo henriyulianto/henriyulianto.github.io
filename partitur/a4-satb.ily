@@ -76,16 +76,16 @@
       }
       {
         \pad-to-box #'(0 . 0) #'(0 . 0)
-        \with-url
-        "https://lilypond.org"
-        \underline #(format #f "LilyPond v~a" (lilypond-version))
+        \with-color #darkblue
+        \with-URL "https://lilypond.org"
+        \bold #(ly:format "LilyPond v~a" (lilypond-version))
       }
       +
       {
         \pad-to-box #'(0 . 0) #'(0 . 0)
-        \with-url
-        "https://henriyulianto.github.io/solmisasi-lily/"
-        \underline #(format #f "solmisasi-lily v~a" (solmisasi-lily-version))
+        \with-color #darkblue
+        \with-URL "https://henriyulianto.github.io/solmisasi-lily/"
+        \bold #(ly:format "solmisasi-lily v~a" (solmisasi-lily-version))
       }
       oleh Henri Yulianto.
     }
@@ -139,9 +139,9 @@ watermark = \markup {
   short-indent  = 7.5\mm
 
   % Ragged
-  ragged-right  = ##f
-  ragged-last   = ##f
-  ragged-bottom = ##t
+  ragged-right       = ##f
+  ragged-last        = ##f
+  ragged-bottom      = ##t
 
   % Spacing
   system-system-spacing.basic-distance = #8
@@ -166,93 +166,114 @@ watermark = \markup {
              top-system-spacing))
 
   % Headers
-  bookTitleMarkup = \markup {
-    \override #'(baseline-skip . 2.8)
-    \column {
-      \fill-line { \fromproperty #'header:dedication }
-      \override #'(baseline-skip . 3.0)
-      \column {
-        \fill-line {
-          %\abs-fontsize #17
-          \huge \larger \larger \larger \bold \caps
-          \fromproperty #'header:title
-        }
-        \fill-line {
-          %\abs-fontsize #12.5
-          \large \bold \fromproperty #'header:subtitle
-        }
-        \vspace #0.5
-        \fill-line {
-          { \fontsize #0.2 \fromproperty #'header:poet }
-          { \bold \fromproperty #'header:instrument }
-          { \fontsize #0.5 \fromproperty #'header:composer }
-        }
-        \fill-line {
-          { \fontsize #0.2 \fromproperty #'header:meter }
-          { \fontsize #0.2 \fromproperty #'header:arranger }
-        }
-      }
-    }
-  }
+  bookTitleMarkup =
+  #(if (or (eq? page-breaking ly:one-line-breaking)
+           (eq? page-breaking ly:one-line-auto-height-breaking))
+       #f
+       #{
+         \markup {
+           \override #'(baseline-skip . 2.8)
+           \column {
+             \fill-line { \fromproperty #'header:dedication }
+             \override #'(baseline-skip . 3.0)
+             \column {
+               \fill-line {
+                 %\abs-fontsize #17
+                 \huge \larger \larger \larger \bold \caps
+                 \fromproperty #'header:title
+               }
+               \fill-line {
+                 %\abs-fontsize #12.5
+                 \large \bold \fromproperty #'header:subtitle
+               }
+               \vspace #0.5
+               \fill-line {
+                 { \fontsize #0.2 \fromproperty #'header:poet }
+                 { \bold \fromproperty #'header:instrument }
+                 { \fontsize #0.5 \fromproperty #'header:composer }
+               }
+               \fill-line {
+                 { \fontsize #0.2 \fromproperty #'header:meter }
+                 { \fontsize #0.2 \fromproperty #'header:arranger }
+               }
+             }
+           }
+         }
+       #})
 
-  oddHeaderMarkup = \markup {
-    \combine #(if CetakWatermark
-                  #{ \markup \watermark #}
-                  #{ \markup\null #})
-    \unless \on-first-page-of-part {
-      \override #'(baseline-skip . 1.0)
-      \column {
-        \fill-line {
-          \fromproperty #'header:header-title
-          ""
-          \override #'(baseline-skip . 2.5)
-          \right-column {
-            \line {
-              \if \should-print-page-number
-              \bold \concat {
-                \fromproperty #'page:page-number-string
-                "/"
-                \page-ref #'lastPage "0" "?"
-              }
-            }
-            \line {
-              \caps \fromproperty #'header:jenis-notasi
-            }
-          }
-        }
-        \vspace #0.1
-        \override #'(thickness . 1.3)
-        \draw-hline
-      }
-    }
-    \if \on-first-page-of-part {
-      \column {
-        \fill-line {
-          ""
-          ""
-          \box \pad-markup #0.3 \caps \fromproperty #'header:jenis-notasi
-        }
-      }
-    }
-  }
+  oddHeaderMarkup =
+  #(if (or (eq? page-breaking ly:one-line-breaking)
+           (eq? page-breaking ly:one-line-auto-height-breaking))
+       #f
+       #{
+         \markup {
+           \combine #(if CetakWatermark
+                         #{ \markup \watermark #}
+                         #{ \markup\null #})
+           \unless \on-first-page-of-part {
+             \override #'(baseline-skip . 1.0)
+             \column {
+               \fill-line {
+                 \fromproperty #'header:header-title
+                 ""
+                 \override #'(baseline-skip . 2.5)
+                 \right-column {
+                   \line {
+                     \if \should-print-page-number
+                     \bold \concat {
+                       \fromproperty #'page:page-number-string
+                       "/"
+                       \page-ref #'lastPage "0" "?"
+                     }
+                   }
+                   \line {
+                     \caps \fromproperty #'header:jenis-notasi
+                   }
+                 }
+               }
+               \vspace #0.1
+               \override #'(thickness . 1.3)
+               \draw-hline
+             }
+           }
+           \if \on-first-page-of-part {
+             \column {
+               \fill-line {
+                 ""
+                 ""
+                 \box \pad-markup #0.3 \caps \fromproperty #'header:jenis-notasi
+               }
+             }
+           }
+         }
+       #})
   evenHeaderMarkup = \oddHeaderMarkup
 
-  oddFooterMarkup = \markup {
-    \override #'(baseline-skip . 2.3)
-    \column {
-      \fill-line {
-        %% Copyright header field only on first page in each bookpart.
-        \if \on-first-page-of-part
-        \abs-fontsize #9.5 \fromproperty #'header:copyright
-      }
-      \fill-line {
-        %% Tagline header field only on last page in the book.
-        %\if \on-last-page-of-part
-        \if \on-first-page-of-part
-        \abs-fontsize #9.5 \fromproperty #'header:tagline
-      }
-    }
-  }
+  oddFooterMarkup =
+  #(if (or (eq? page-breaking ly:one-line-breaking)
+           (eq? page-breaking ly:one-line-auto-height-breaking))
+       #f
+       #{
+         \markup {
+           \override #'(baseline-skip . 2.3)
+           \column {
+             \fill-line {
+               %% Copyright header field only on first page in each bookpart.
+               \if \on-first-page-of-part
+               \abs-fontsize #9.5 \fromproperty #'header:copyright
+             }
+             \fill-line {
+               %% Tagline header field only on last page in the book.
+               %\if \on-last-page-of-part
+               \if \on-first-page-of-part
+               \abs-fontsize #9.5 \fromproperty #'header:tagline
+             }
+           }
+         }
+       #})
+
+  property-defaults.fonts.serif = "Lilypond Serif"
+  property-defaults.fonts.sans = "Lilypond Sans Serif"
 }
 
 \include "vocal-tkit.ly"
@@ -297,9 +318,9 @@ SATB_Solmisasi_Layout =
   \context {
     \SolmisasiVoice
     \override NoteHead.font-family = #'serif
-    \override NoteHead.font-size = #0.25
+    %\override NoteHead.font-size = #0.25
     \override Rest.font-family = #'serif
-    \override Rest.font-size = #0.25
+    %\override Rest.font-size = #0.25
     \override DynamicLineSpanner.outside-staff-priority = ##f
     \override DynamicLineSpanner.Y-offset = #3.25
     \override Hairpin.thickness = #0.9
@@ -320,13 +341,11 @@ SATB_Solmisasi_Layout =
     \override VerticalAxisGroup.nonstaff-relatedstaff-spacing.basic-distance = #0
     %\override VerticalAxisGroup.nonstaff-relatedstaff-spacing.padding = #0.2
     \override VerticalAxisGroup.staff-affinity = #UP
-    \override LyricText.font-series = #'medium
-    %%\override LyricText.font-size = #2
     \override LyricHyphen.Y-offset = #0.2
     \override LyricHyphen.minimum-distance = #2.0
-    \override LyricText.layer = #-2
-    \override LyricText.whiteout = #2
-    \override LyricText.whiteout-style = #'outline
+    % \override LyricText.layer = #-2
+    % \override LyricText.whiteout = #2
+    % \override LyricText.whiteout-style = #'outline
     \override LyricText.word-space = #1
     \override LyricExtender.layer = -4
     \override LyricHyphen.layer = #-3
@@ -388,6 +407,33 @@ SATB_NotBalok = {
     >>
   >>
   \label #'lastPage
+}
+
+SATB_Midi = {
+  <<
+    #(if Global
+         #{
+           \new Dynamics {
+             \solmisasiMusic {
+               \keepWithTag #'(solmisasi notangka) \Global
+             }
+           }
+         #})
+    \make-one-pseudo-solmisasi-voice-vocal-staff "Intro"
+    \make-one-pseudo-solmisasi-voice-vocal-staff "Solo"
+    \new ChoirStaff <<
+      \make-one-pseudo-solmisasi-voice-vocal-staff "Descant"
+      %%
+      \make-one-pseudo-solmisasi-voice-vocal-staff "Women"
+      %%
+      \make-one-pseudo-solmisasi-voice-vocal-staff #AlwaysShortInstrumentName "Soprano"
+      \make-one-pseudo-solmisasi-voice-vocal-staff #AlwaysShortInstrumentName "Alto"
+      \make-one-pseudo-solmisasi-voice-vocal-staff #AlwaysShortInstrumentName "Tenor"
+      \make-one-pseudo-solmisasi-voice-vocal-staff #AlwaysShortInstrumentName "Bass"
+      %%
+      \make-one-pseudo-solmisasi-voice-vocal-staff "Men"
+    >>
+  >>
 }
 
 Bookpart_NotAngka = \bookpart {
@@ -462,10 +508,11 @@ Bookpart_NotBalok = \bookpart {
 
 Bookpart_Midi = \bookpart {
   \conditional #ExportMIDI \score {
-    \keepWithTag #'(play midi notbalok)
+    \keepWithTag #'(play midi notangka solmisasi)
     #(if have-music
          #{
-           \articulate \unfoldRepeats <<
+           %\articulate
+           \unfoldRepeats <<
              \SATB_NotBalok
              #(if (ly:music? Piano)
                   #{ \Piano #})
@@ -477,6 +524,14 @@ Bookpart_Midi = \bookpart {
         \Score
         midiChannelMapping = #'instrument
       }
+      \context {
+        \Staff
+        \remove "Staff_performer"
+      }
+      \context {
+        \Voice
+        \consists "Staff_performer"
+      }
     }
   }
 }
@@ -486,3 +541,5 @@ Bookpart_Midi = \bookpart {
   \bookpart { \Bookpart_NotBalok }
   \bookpart { \Bookpart_Midi }
 }
+
+
